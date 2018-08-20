@@ -1,0 +1,112 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Suite for take an exam</title>
+    <link rel="icon" href="favicon.png" type="image/gif">
+
+    <!-- require jquery and bootstrap scripts -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+
+    <!-- adding style here -->
+    <style type="text/css">
+      header{
+        background-color: rgb(155, 194, 228);
+        font-size:20px;
+        padding:15px;
+      }
+      header, .form-group{
+        margin-bottom: 3%;
+      }
+      .form-group{
+        width:50%;
+      }
+      #body{
+        margin-left:3%;
+        margin-right:3%;
+      }
+      .form-control{
+        margin: 8px;63180a2bc444
+      }
+      #right_header{63180a2bc444
+        width:20%;
+        font-size:1563180a2bc444
+        margin-right63180a2bc444
+      }
+      #left_header{
+        margin-left:0;
+        width:40%;
+        display:inline-block;
+      }
+      #id {
+        width:49%;
+        display: inline-block;
+      }
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+  </head>
+  <body ng-app="application" ng-controller="appController">
+    <header>
+      <div id="left_header">Cumulative Record. Student Suite</div>
+      <i id="right_header">The personal record for selected student. </i>
+    </header>
+
+    <div id="body">
+
+      <div class="form-group">
+        <label>Query Tests by Student</label><br>
+        <h5 style="color:red;margin-bottom:2%" id="error_query_student">Error: Test(s) for selected student not found</h5>
+               Enter a student name: <input id="studentName" class="form-control" type="text" placeholder="Ex: AB1701" ng-model="student_name">
+        </div>
+
+      <table id="student_tests" class="table" align="center">
+
+        <tr >
+          <th>ID</th>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Teacher</th>
+          <th>Rate</th>
+          <th>Timestamp</th>
+          <th>Description</th>
+        </tr>
+
+        <tr ng-repeat="stest in student_tests">
+          <td>{{stest.Key}}</td>
+          <td>{{stest.student}}</td>
+          <td>{{stest.course}}</td>
+          <td>{{stest.teacher}}</td>
+          <td>{{stest.rate}}</td>
+          <td>{{stest.stestTS}}</td>
+          <td>{{stest.stestDesc}}</td>
+        </tr>
+      </table>
+
+      <div class="form-group">
+         <input id="querySender" type="submit" value="Query" class="btn btn-primary" ng-click="queryTestByStudent()">
+      </div>
+
+
+     <p><a href="index.html">Back to Main Page</a></p>
+
+    </div>
+  </body>
+    <!-- requiring the angular page -->
+    <script type="text/javascript" src="app.js"> </script>
+</html>
