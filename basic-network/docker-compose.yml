@@ -77,7 +77,7 @@ services:
       - 7053:7053
     volumes:
         - /var/run/:/host/var/run/
-#        - /var/hyperledger/peer0:/var/hyperledger/production
+      #  - /var/hyperledger/peer0:/var/hyperledger/production
         - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/etc/hyperledger/msp/peer
         - ./crypto-config/peerOrganizations/org1.example.com/users:/etc/hyperledger/msp/users
         - ./config:/etc/hyperledger/configtx
@@ -97,8 +97,8 @@ services:
       - COUCHDB_PASSWORD=
     ports:
       - 5984:5984
-#    volumes:
-#      - /var/hyperledger/couchdb0:/opt/couchdb/data
+    #volumes:
+    #  - /var/hyperledger/couchdb0:/opt/couchdb/data
     networks:
       - basic
 

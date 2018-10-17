@@ -1,6 +1,6 @@
 ## Hyperledger Fabric Sample Application
 
-This application demonstrates the creation and transfer of parsel operation between customers using Hyperledger Fabric body  as supply chain.
+This application demonstrates the exam's record flow between officers, teachers and students using Hyperledger Fabric body  as record chain.
 In this exercise we will set up the minimum number of nodes required to develop chaincode. It has a single peer and a single organization.
 
 if getting error about running ./startFabric.sh permission 
