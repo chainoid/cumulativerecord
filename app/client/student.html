@@ -8,6 +8,7 @@
 
     <!-- require jquery and bootstrap scripts -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
@@ -19,23 +20,18 @@
         font-size:20px;
         padding:15px;
       }
-      header, .form-group{
-        margin-bottom: 3%;
-      }
-      .form-group{
-        width:50%;
-      }
+          
       #body{
         margin-left:3%;
         margin-right:3%;
       }
       .form-control{
-        margin: 8px;63180a2bc444
+        margin: 8px;
       }
-      #right_header{63180a2bc444
+      #right_header{
         width:20%;
-        font-size:1563180a2bc444
-        margin-right63180a2bc444
+        font-size:15px;
+        margin-right:0px;
       }
       #left_header{
         margin-left:0;
@@ -46,6 +42,7 @@
         width:49%;
         display: inline-block;
       }
+
       table {
           font-family: arial, sans-serif;
           border-collapse: collapse;
@@ -62,7 +59,7 @@
     </style>
   </head>
   <body ng-app="application" ng-controller="appController">
-    <header>
+    <header class="my-header">
       <div id="left_header">Cumulative Record. Student Suite</div>
       <i id="right_header">The personal record for selected student.</i>
     </header>
@@ -72,7 +69,9 @@
       <div class="form-group">
         <label>Query Tests by Student</label><br>
         <h5 style="color:red;margin-bottom:2%" id="error_query_student">Error: Test(s) for selected student not found</h5>
-               Enter a student name: <input id="studentName" class="form-control" type="text" placeholder="Ex: AB1701" ng-model="student_name">
+               Enter a student name: <input id="studentName" class="form-control input-field" type="text" placeholder="Ex: AB1701" ng-model="student_name">
+
+        <input id="queryTestByStudentId" type="submit" value="Query" class="btn btn-primary" ng-click="queryTestByStudent()">
         </div>
 
       <table id="student_tests" class="table" align="center">
@@ -97,12 +96,7 @@
           <td>{{stest.stestDesc}}</td>
         </tr>
       </table>
-
-      <div class="form-group">
-         <input id="querySender" type="submit" value="Query" class="btn btn-primary" ng-click="queryTestByStudent()">
-      </div>
-
-
+     
      <p><a href="index.html">Back to Main Page</a></p>
 
     </div>

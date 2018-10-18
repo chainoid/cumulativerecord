@@ -8,9 +8,12 @@
 
     <!-- require jquery and bootstrap scripts -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
+</head>
 
     <!-- adding style here -->
     <style type="text/css">
@@ -19,12 +22,7 @@
         font-size:20px;
         padding:15px;
       }
-      header, .form-group{
-        margin-bottom: 3%;
-      }
-      .form-group{
-        width:50%;
-      }
+           
       #body{
         margin-left:3%;
         margin-right:3%;
@@ -62,7 +60,7 @@
     </style>
   </head>
   <body ng-app="application" ng-controller="appController">
-    <header>
+    <header class="my-header">
       <div id="left_header">Cumulative Record. Teacher Suite</div>
       <i id="right_header">The scenario of exam procedure</i>
     </header>
@@ -72,9 +70,8 @@
       <div class="form-group">
         <label>Query a test list for selected group and course</label><br>
         <h5 style="color:red;margin-bottom:2%" id="error_prepare_exam">Error: Please enter a valid group/course data</h5>
-
-         Enter a group name: <input id="createName" class="form-control" type="text" placeholder="Ex: AA01" ng-model="exam.group">
-         Enter a course name: <input class="form-control" name="assetSelect" type="text" placeholder="Ex: Golang" ng-model="exam.course">
+         Enter a group name:  <input id="createName" class="form-control input-field" type="text" placeholder="Ex: AA01" ng-model="exam.group">
+         Enter a course name: <input class="form-control input-field" name="assetSelect" type="text" placeholder="Ex: Golang" ng-model="exam.course">
         <input id="prepareForExam" type="submit" value="Query" class="btn btn-primary" ng-click="prepareForExam()">
       </div>
 
@@ -110,10 +107,10 @@
         <h5 style="color:red;margin-bottom:2%"   id="error_exam_source">Error: Please enter a valid student/course data for unpassed test</h5>
         <!--h5 style="color:red;margin-bottom:2%"   id="error_old_exam">Error: The exam already passed.</h5-->
         <h5 style="color:green;margin-bottom:2%" id="success_exam">Congratulation: The exam has been approved!</h5>
-         Enter a test unique Id: <input id="createName" class="form-control" type="text"    placeholder="Ex: AA01" ng-model="progress.testId">
-         Enter a student name: <input id="createName" class="form-control" type="text"    placeholder="Ex: AA01" ng-model="progress.student">
-         Enter a course  name: <input class="form-control" name="assetSelect" type="text" placeholder="Ex: Golang" ng-model="progress.course">
-         Enter an exam rate:   <input class="form-control" name="assetSelect" type="text" placeholder="Ex: 5" ng-model="progress.rate">
+         Enter a test unique Id: <input id="createName" class="form-control input-field" type="text"    placeholder="Ex: AA01" ng-model="progress.testId">
+         Enter a student name: <input id="createName" class="form-control input-field" type="text"    placeholder="Ex: AA01" ng-model="progress.student">
+         Enter a course  name: <input class="form-control input-field" type="text" placeholder="Ex: Golang" ng-model="progress.course">
+         Enter an exam rate:   <input class="form-control input-field" type="text" placeholder="Ex: 5" ng-model="progress.rate">
         <input id="takeTheTest" type="submit" value="TakeTest" class="btn btn-primary" ng-click="takeTheTest()">
       </div>
 

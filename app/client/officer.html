@@ -9,66 +9,51 @@
 
   <!-- require jquery and bootstrap scripts -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 
   <!-- adding style here -->
   <style type="text/css">
+  
     header {
       background-color: rgb(150, 184, 158);
       font-size: 20px;
       padding: 15px;
     }
-
-    header,
-    .form-group {
-      margin-bottom: 3%;
-    }
-
-    .form-group {
-      width: 50%;
-    }
-
+    
     #body {
       margin-left: 3%;
       margin-right: 3%;
     }
-
     .form-control {
       margin: 8px;
     }
-
     #right_header {
       width: 20%;
       font-size: 15px;
       margin-right: 0px;
     }
-
     #left_header {
       margin-left: 0;
       width: 40%;
       display: inline-block;
     }
-
     #id {
       width: 49%;
       display: inline-block;
     }
-
     table {
       font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
+        background-color: #dddddd;
+        padding: 1%;
     }
-
-    td,
-    th {
+    td, th {
       border: 1px solid #dddddd;
       text-align: left;
       padding: 8px;
     }
-
     tr:nth-child(even) {
       background-color: #dddddd;
     }
@@ -76,7 +61,7 @@
 </head>
 
 <body ng-app="application" ng-controller="appController">
-  <header>
+  <header class="my-header">
     <div id="left_header">Cumulative Record. Officer Suite</div>
     <i id="right_header">The scenario of officer activities</i>
   </header>
@@ -100,6 +85,7 @@
     <!--  Get all groups from repository-->
     <div class="form-group">
       <label>Query All Groups in College</label>
+      <p><input id="queryAllGroups" type="submit" value="Query Group" class="btn btn-primary" ng-click="queryAllGroups()"></p>
     </div>
 
     <table id="all_groups" class="table" align="center">
@@ -119,20 +105,15 @@
       </tr>
     </table>
 
-    <div class="form-group">
-      <p><input id="queryAllGroups" type="submit" value="Query Group" class="btn btn-primary" ng-click="queryAllGroups()"></p>
-    </div>
-
     <!--  Add new group into repository-->
     <div class="form-group">
       <label>Add new group into repository</label><br>
       <h5 style="color:red;margin-bottom:2%" id="error_add_group">Error: Please enter a valid group data.</h5>
       <h5 style="color:green;margin-bottom:2%" id="success_add_group">The new croup added successfully.</h5>
-      Enter a group key: <input id="groupKey" class="form-control" type="text" placeholder="Ex: 2345" ng-model="newGroup.key">
-      Enter a group Id: <input id="groupId" class="form-control" type="text" placeholder="Ex: AA01" ng-model="newGroup.groupId">
-      Enter a group name:<input id="groupName" class="form-control" name="assetSelect" type="text" placeholder="Ex: "
-        ng-model="newGroup.groupName">
-      Enter a description: <input id="groupDesc" class="form-control" name="assetSelect" type="text" placeholder="Ex: Description"
+      Enter a group key:   <input id="groupKey"  class="form-control input-field" type="text" placeholder="Ex: 2345" ng-model="newGroup.key">
+      Enter a group Id:    <input id="groupId"   class="form-control input-field" type="text" placeholder="Ex: AA01" ng-model="newGroup.groupId">
+      Enter a group name:  <input id="groupName" class="form-control input-field" type="text" placeholder="Ex: " ng-model="newGroup.groupName">
+      Enter a description: <input id="groupDesc" class="form-control input-field"  type="text" placeholder="Ex: Description"
         ng-model="newGroup.groupDesc">
       <input id="addGroup" type="submit" value="Add Group" class="btn btn-primary" ng-click="addGroup()">
     </div>
@@ -140,6 +121,7 @@
     <!--  Query all tests in college-->
     <div class="form-group">
       <label>Query All Tests in College</label>
+      <p><input id="queryAllTests" type="submit" value="Query Tests" class="btn btn-primary" ng-click="queryAllTests()"></p>
     </div>
 
     <table id="all_tests" class="table" align="center">
@@ -167,30 +149,27 @@
       </tr>
     </table>
 
-    <div class="form-group">
-      <p><input id="queryAllTests" type="submit" value="Query Tests" class="btn btn-primary" ng-click="queryAllTests()"></p>
-    </div>
-
     <!--  Create exam  worksheet for one group/course/teacher case -->
     <div class="form-group">
       <div class="form-group">
         <label>Generate empty Exam's Worksheet and put into Ledger</label><br>
         <h5 style="color:green;margin-bottom:2%" id="success_generated">Success! Tx ID: {{generated_test_group}}</h5>
         <h5 style="color:red;margin-bottom:2%" id="error_generated">Error: Please enter a valid data</h5>
-        Enter a new key(initial number for group): <input class="form-control" name="assetSelect" placeholder="Ex: 021"
+        Enter a new key(initial number for group): <input class="form-control input-field" placeholder="Ex: 021"
           ng-model="generator.key">
-        Enter a group name from available list above: <input class="form-control" name="assetSelect" placeholder="Ex: 001"
+        Enter a group name from available list above: <input class="form-control input-field" placeholder="Ex: 001"
           ng-model="generator.groupId">
-        Enter amount of group members: <input class="form-control" name="assetSelect" placeholder="Ex: 30" ng-model="generator.groupSize">
-        Enter course name: <input class="form-control" name="assetSelect" placeholder="Ex: Math" ng-model="generator.courseName">
-        Enter teacher name: <input class="form-control" name="assetSelect" placeholder="Ex: Smith" ng-model="generator.teacherName">
-        TBD: The test deadline: <input class="form-control" name="assetSelect" placeholder="Ex: 2014090811" ng-model="generator.deadlineTS">
+        Enter amount of group members: <input class="form-control input-field" name="assetSelect" placeholder="Ex: 30" ng-model="generator.groupSize">
+        Enter course name: <input class="form-control input-field" name="assetSelect" placeholder="Ex: Math" ng-model="generator.courseName">
+        Enter teacher name: <input class="form-control input-field" name="assetSelect" placeholder="Ex: Smith" ng-model="generator.teacherName">
+        TBD: The test deadline: <input class="form-control input-field" name="assetSelect" placeholder="Ex: 2014090811" ng-model="generator.deadlineTS">
         <input id="createTestForGroup" type="submit" value="Generate" class="btn btn-primary" ng-click="createTestForGroup()">
       </div>
-
-      <p><a href="index.html">Back to Main Page</a></p>
-
     </div>
+    
+    <p><a href="index.html">Back to Main Page</a></p>
+    
+
 </body>
 <!-- requiring the angular page -->
 <script type="text/javascript" src="app.js"> </script>

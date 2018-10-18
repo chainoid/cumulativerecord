@@ -8,6 +8,7 @@
 
     <!-- require jquery and bootstrap scripts -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
@@ -18,12 +19,6 @@
         background-color: linen;
         font-size:20px;
         padding:15px;
-      }
-      header, .form-group{
-        margin-bottom: 3%;
-      }
-      .form-group{
-        width:50%;
       }
       #body{
         margin-left:3%;
@@ -47,7 +42,6 @@
         font-size:15px;
         margin-right:0px;
       }
-
       #id {
         width:49%;
         display: inline-block;
@@ -57,18 +51,10 @@
           border-collapse: collapse;
           width: 100%;
       }
-      td, th {
-          border: 1px solid #dddddd;
-          text-align: left;
-          padding: 8px;
-      }
-      tr:nth-child(even) {
-          background-color: #dddddd;
-      }
-    </style>
+      </style>
   </head>
   <body ng-app="application" ng-controller="appController">
-    <header>
+    <header class="my-header">
       <div id="left_header">Cumulative Record Application</div>
       <i id="right_header">Repository Of Student Tests build on the Hyperledger Fabric.</i>
     </header>
@@ -76,9 +62,10 @@
     <div id="body">
      
 
-      <div class="form-group">
-
-      <b id="right_header">Are you: </b>
+      <div>
+       <b id="right_header">Are you: </b>
+       <br/>
+       <br/>
       </div>
 
       <div class="form-group">
