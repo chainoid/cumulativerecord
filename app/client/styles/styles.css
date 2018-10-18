@@ -7,11 +7,7 @@ header, .form-group{
   background-color: #dddddd;
   padding: 1%;
 }
-.input-field{
-    width: 200px;
-    padding: 6px 1px;
-    margin-left: 0px;
-}
+
 .my-header{
     margin-left: 2%;
     margin-right: 2%;
