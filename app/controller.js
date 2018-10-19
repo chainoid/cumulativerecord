@@ -215,7 +215,7 @@ return{
 		                    console.error('The transaction was invalid, code = ' + code);
 		                    resolve(return_status); // we could use reject(new Error('Problem with the tranaction, event status ::'+code));
 		                } else {
-		                    console.log('The transaction has been committed on peer ' + channel_event_hub.getPeerAddr);
+		                    console.log('The transaction has been committed on peer ' + channel_event_hub.getPeerAddr());
 		                    resolve(return_status);
 		                }
 		            }, (err) => {
