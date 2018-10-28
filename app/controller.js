@@ -235,7 +235,7 @@ return{
 		    // check the results in the order the promises were added to the promise all list
 		    if (results && results[0] && results[0].status === 'SUCCESS') {
 		        console.log('Successfully sent transaction to the orderer.');
-		        res.send(tx_id.getTransactionID());
+		        // Only one respose per request: //res.send(tx_id.getTransactionID());
 		    } else {
 		        console.error('Failed to order the transaction. Error code: ' + response.status);
 		    }
@@ -292,7 +292,7 @@ return{
 
 		    // queryAllGroups - requires no arguments , ex: args: [''],event_hub
 		    const request = {
-		        chaincodeId: 'cum-rec',
+		        chaincodeId: 'cum-record',
 		        fcn: 'queryAllTests',
 				chainId: 'mychannel',
 				args: [''],
@@ -377,7 +377,7 @@ return{
 		    // send proposal to endorser
 		    const request = {
 		        //targets : --- letting this default to the peers assigned to the channel
-		        chaincodeId: 'cum-rec',
+		        chaincodeId: 'cum-record',
 		        fcn: 'createTestForGroup',
 		        args: [key, groupId,  groupSize, courseName, teacherName, deadlineTS ],
 		        chainId: 'mychannel',
@@ -517,9 +517,9 @@ return{
 		        throw new Error('Failed to get user1.... run registerUser.js');
 		    }
 
-		    // getParsel - requires 1 argument, ex: args: ['4'],
+		    // getTestById - requires 1 argument, ex: args: ['4'],
 		    const request = {
-		        chaincodeId: 'elza-rec',
+		        chaincodeId: 'cum-record',
 		        txId: tx_id,
 		        fcn: 'queryTestById',
 		        args: [key]
@@ -589,7 +589,7 @@ return{
 
 				// queryTestByStudent - requires 1 argument, ex: args: ['AB1200'],
 				const request = {
-						chaincodeId: 'cum-rec',
+						chaincodeId: 'cum-record',
 						fcn: 'queryTestByStudent',
 						args: [name],
 						chainId: 'mychannel',
@@ -676,7 +676,7 @@ return{
 
 				// getParsel - requires 1 argument, ex: args: ['4'],
 				const request = {
-						chaincodeId: 'cum-rec',
+						chaincodeId: 'cum-record',
 						fcn: 'prepareForExam',
 						args: [group, course],
 						chainId: 'mychannel',
@@ -761,7 +761,7 @@ return{
 		    // send proposal to endorser
 		    var request = {
 		        //targets : --- letting this default to the peers assigned to the channel
-		        chaincodeId: 'cum-rec',
+		        chaincodeId: 'cum-record',
 		        fcn: 'takeTheTest',
 		        args: [key, student, course, rate],
 		        chainId: 'mychannel',
@@ -848,7 +848,7 @@ return{
 		    // check the results in the order the promises were added to the promise all list
 		    if (results && results[0] && results[0].status === 'SUCCESS') {
 		        console.log('Successfully sent transaction to the orderer.');
-		        res.json(tx_id.getTransactionID())
+		        //res.json(tx_id.getTransactionID())
 		    } else {
 		        console.error('Failed to order the transaction. Error code: ' + response.status);
 		        res.send(response.status);
@@ -856,18 +856,17 @@ return{
 
 		    if(results && results[1] && results[1].event_status === 'VALID') {
 		        console.log('Successfully committed the change to the ledger by the peer');
-		        //res.json(tx_id.getTransactionID())
-				res.send(results[1].toString())
+		        res.json(tx_id.getTransactionID())
+				//res.send(results[1].toString())
 		    } else {
 		        console.log('Transaction failed to be committed to the ledger due to ::'+results[1].event_status);
 		    }
 		}).catch((err) => {
 		    console.error('Failed to invoke successfully :: ' + err);
-		    res.send("Could not locate unpassed test");
+		    res.send("Could not locate test");
 		});
 
 	}
-
 }
 })();
 

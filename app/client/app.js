@@ -28,12 +28,11 @@ app.controller('appController', function ($scope, appFactory) {
 		appFactory.queryAllGroups(function (data) {
 			var array = [];
 			for (var i = 0; i < data.length; i++) {
-				parseInt(data[i].Key);
-				data[i].Record.Key = parseInt(data[i].Key);
+				data[i].Record.Key = data[i].Key;
 				array.push(data[i].Record);
 			}
-			array.sort(function (a, b) {
-				return parseFloat(a.Key) - parseFloat(b.Key);
+			array.sort(function(a, b) {
+			    return a.groupName.localeCompare(b.groupName);
 			});
 			$scope.all_groups = array;
 		});
@@ -61,8 +60,7 @@ app.controller('appController', function ($scope, appFactory) {
 		appFactory.queryAllTests(function (data) {
 			var array = [];
 			for (var i = 0; i < data.length; i++) {
-				parseInt(data[i].Key);
-				data[i].Record.Key = parseInt(data[i].Key);
+				data[i].Record.Key = data[i].Key;
 				array.push(data[i].Record);
 			}
 			array.sort(function (a, b) {

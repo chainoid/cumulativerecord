@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -116,7 +117,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	for i < len(stests) {
 		fmt.Println("i is ", i)
 		stestAsBytes, _ := json.Marshal(stests[i])
-		APIstub.PutState(strconv.Itoa(i+1), stestAsBytes)
+		APIstub.PutState(fmt.Sprintf("%X", rand.Int()), stestAsBytes)
 		fmt.Println("Added", stests[i])
 		i = i + 1
 	}
@@ -140,7 +141,7 @@ func (s *SmartContract) addStudent(APIstub shim.ChaincodeStubInterface, args []s
 
 	studentAsBytes, _ := json.Marshal(student)
 
-	err := APIstub.PutState(args[0], studentAsBytes)
+	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), studentAsBytes)
 
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to add student to system with id: %s", args[0]))
@@ -247,7 +248,7 @@ func (s *SmartContract) createTestForGroup(APIstub shim.ChaincodeStubInterface, 
 
 		stestAsBytes, _ := json.Marshal(stest)
 
-		err := APIstub.PutState(strconv.Itoa(startIndex+i), stestAsBytes)
+		err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), stestAsBytes)
 
 		if err != nil {
 			return shim.Error(fmt.Sprintf("Failed to record new test for the group: %s", args[0]))
@@ -436,9 +437,8 @@ func (s *SmartContract) takeTheTest(APIstub shim.ChaincodeStubInterface, args []
 }
 
 /*
- * main function *
-calls the Start function
-The main function starts the chaincode in the container during instantiation.
+ * main function  - calls the Start function
+   The main function starts the chaincode in the container during instantiation.
 */
 func main() {
 

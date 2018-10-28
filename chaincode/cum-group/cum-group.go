@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strconv"
+	"math/rand"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
@@ -102,7 +102,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	for i < len(groups) {
 		fmt.Println("i is ", i)
 		groupAsBytes, _ := json.Marshal(groups[i])
-		APIstub.PutState(strconv.Itoa(i+1), groupAsBytes)
+		APIstub.PutState(fmt.Sprintf("%X", rand.Int()), groupAsBytes)
 		fmt.Println("Added", groups[i])
 		i = i + 1
 	}
@@ -123,7 +123,7 @@ func (s *SmartContract) addGroup(APIstub shim.ChaincodeStubInterface, args []str
 	var group = Group{GroupId: args[1], GroupName: args[2], GroupDesc: args[3]}
 
 	groupAsBytes, _ := json.Marshal(group)
-	err := APIstub.PutState(args[0], groupAsBytes)
+	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), groupAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to record new group: %s", args[0]))
 	}
