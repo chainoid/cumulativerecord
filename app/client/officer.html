@@ -98,16 +98,14 @@
 
       <tr>
         <th>ID</th>
-        <th>GroupId</th>
         <th>GroupName</th>
         <th>GroupDescription</th>
       </tr>
 
       <tr ng-repeat="group in all_groups">
         <td>{{group.Key}}</td>
-        <td>{{group.groupId}}</td>
         <td>{{group.groupName}}</td>
-        <td>{{group.groupDesc}}</td>
+        <td>{{group.description}}</td>
       </tr>
     </table>
 
@@ -116,11 +114,8 @@
       <label>Add new group into repository</label><br>
       <h5 style="color:red;margin-bottom:2%" id="error_add_group">Error: Please enter a valid group data.</h5>
       <h5 style="color:green;margin-bottom:2%" id="success_add_group">The new croup added successfully.</h5>
-      Enter a group key:   <input id="groupKey"  class="form-control input-field" type="text" placeholder="Ex: 2345" ng-model="newGroup.key">
-      Enter a group Id:    <input id="groupId"   class="form-control input-field" type="text" placeholder="Ex: AA01" ng-model="newGroup.groupId">
       Enter a group name:  <input id="groupName" class="form-control input-field" type="text" placeholder="Ex: " ng-model="newGroup.groupName">
-      Enter a description: <input id="groupDesc" class="form-control input-field"  type="text" placeholder="Ex: Description"
-        ng-model="newGroup.groupDesc">
+      Enter a description: <input id="groupDesc" class="form-control input-field"  type="text" placeholder="Ex: Description" ng-model="newGroup.description">
       <input id="addGroup" type="submit" value="Add Group" class="btn btn-primary" ng-click="addGroup()">
     </div>
 

@@ -26,8 +26,28 @@ import (
 	sc "github.com/hyperledger/fabric/protos/peer"
 )
 
+// Define Enum for classificate record type
+type RecordType string
+
+const (
+	GroupType   RecordType = "G"
+	StudentType RecordType = "S"
+	TeacherType RecordType = "T"
+)
+
 // Define the Smart Contract structure
 type SmartContract struct {
+}
+
+/* Define Student structure, with several properties.
+Structure tags are used by encoding/json library
+*/
+type StudentRecord struct {
+	RecordType  string `json:"recordType"`
+	GroupName   string `json:"groupName"`
+	StudentId   string `json:"studentId"`
+	StudentName string `json:"studentName"`
+	Description string `json:"description"`
 }
 
 /* Define Student structure, with several properties.
@@ -39,7 +59,7 @@ type Student struct {
 	GroupName   string `json:"groupName"`
 }
 
-/* Define Student Test structure, with several properties.
+/* Define Student Test structure, with several properties.eeeeeeeeeeeeeeeeeeee
 Structure tags are used by encoding/json library
 */
 type Stest struct {
@@ -84,6 +104,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// Route to the appropriate handler function to interact with the ledger
 	if function == "initLedger" {
 		return s.initLedger(APIstub)
+	} else if function == "queryAllGroups" {
+		return s.queryAllGroups(APIstub)
+	} else if function == "addGroup" {
+		return s.addGroup(APIstub, args)
 	} else if function == "queryAllTests" {
 		return s.queryAllTests(APIstub)
 	} else if function == "queryTestById" {
@@ -104,13 +128,13 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 }
 
 /*
- * The initLedger method *
-Will add test data to our network
-*/
+ * The initLedger method
+ * Will add records to our network
+ */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	stests := []Stest{
-		Stest{StestId: "001", Group: "AB17", Course: "Maths", Teacher: "Ivanov", Student: "AB1701", Rate: "", StestTS: "", StestDesc: ""},
-		Stest{StestId: "002", Group: "AB17", Course: "Phisycs", Teacher: "Petrov", Student: "AB1701", Rate: "", StestTS: "", StestDesc: ""},
+	stests := []StudentRecord{
+		StudentRecord{RecordType: "G", GroupName: "AB17", StudentId: "AB1701", StudentName: "StudentOne", Description: "Desc AB17"},
+		StudentRecord{RecordType: "G", GroupName: "AB18", StudentId: "AB1701", StudentName: "StudentTwo", Description: "Desc AB18"},
 	}
 
 	i := 0
@@ -120,6 +144,85 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		APIstub.PutState(fmt.Sprintf("%X", rand.Int()), stestAsBytes)
 		fmt.Println("Added", stests[i])
 		i = i + 1
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The queryAllGroups method *
+allows for assessing all the records added to the ledger(all groups in the delivery system)
+This method does not take any arguments. Returns JSON string containing results.
+*/
+func (s *SmartContract) queryAllGroups(APIstub shim.ChaincodeStubInterface) sc.Response {
+
+	startKey := "0"
+	endKey := "9999"
+
+	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing QueryResults
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		// Create an object
+		studentRecord := StudentRecord{}
+		// Unmarshal record to stest object
+		json.Unmarshal(queryResponse.Value, &studentRecord)
+
+		// Add only filtered by RecordType as Group records
+		if studentRecord.RecordType == "G" {
+
+			// Add comma before array members,suppress it for the first array member
+			if bArrayMemberAlreadyWritten == true {
+				buffer.WriteString(",")
+			}
+			buffer.WriteString("{\"Key\":")
+			buffer.WriteString("\"")
+			buffer.WriteString(queryResponse.Key)
+			buffer.WriteString("\"")
+
+			buffer.WriteString(", \"Record\":")
+			// Record is a JSON object, so we write as-is
+			buffer.WriteString(string(queryResponse.Value))
+			buffer.WriteString("}")
+			bArrayMemberAlreadyWritten = true
+		}
+	}
+	buffer.WriteString("]")
+
+	fmt.Printf("- queryAllGroups:\n%s\n", buffer.String())
+
+	return shim.Success(buffer.Bytes())
+}
+
+/*
+ * The addGroup method
+ * This method takes in four arguments (attributes to be saved in the ledger).
+ */
+func (s *SmartContract) addGroup(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
+	}
+
+	var groupRecord = StudentRecord{RecordType: "G", GroupName: args[0], Description: args[1]}
+
+	groupRecordAsBytes, _ := json.Marshal(groupRecord)
+	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), groupRecordAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to record new group: %s", args[0]))
 	}
 
 	return shim.Success(nil)
@@ -137,11 +240,11 @@ func (s *SmartContract) addStudent(APIstub shim.ChaincodeStubInterface, args []s
 
 	// Starting index for records
 
-	var student = Student{StudentId: args[0], StudentName: args[1], GroupName: args[2]}
+	var studentRecord = StudentRecord{RecordType: "S", StudentId: args[0], StudentName: args[1], GroupName: args[2]}
 
-	studentAsBytes, _ := json.Marshal(student)
+	studentRecordAsBytes, _ := json.Marshal(studentRecord)
 
-	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), studentAsBytes)
+	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), studentRecordAsBytes)
 
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to add student to system with id: %s", args[0]))

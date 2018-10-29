@@ -93,19 +93,19 @@ func (s *SmartContract) queryGroupById(APIstub shim.ChaincodeStubInterface, args
 Will add test data to our network
 */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	groups := []Group{
-		Group{GroupId: "001", GroupName: "AC17", GroupDesc: "Description for AB17"},
-		Group{GroupId: "002", GroupName: "AC18", GroupDesc: "Description for AB18"},
-	}
+	// groups := []Group{
+	// 	Group{GroupId: "001", GroupName: "AC17", GroupDesc: "Description for AB17"},
+	// 	Group{GroupId: "002", GroupName: "AC18", GroupDesc: "Description for AB18"},
+	// }
 
-	i := 0
-	for i < len(groups) {
-		fmt.Println("i is ", i)
-		groupAsBytes, _ := json.Marshal(groups[i])
-		APIstub.PutState(fmt.Sprintf("%X", rand.Int()), groupAsBytes)
-		fmt.Println("Added", groups[i])
-		i = i + 1
-	}
+	// i := 0
+	// for i < len(groups) {
+	// 	fmt.Println("i is ", i)
+	// 	groupAsBytes, _ := json.Marshal(groups[i])
+	// 	APIstub.PutState(fmt.Sprintf("%X", rand.Int()), groupAsBytes)
+	// 	fmt.Println("Added", groups[i])
+	// 	i = i + 1
+	// }
 
 	return shim.Success(nil)
 }

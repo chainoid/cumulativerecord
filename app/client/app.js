@@ -212,7 +212,7 @@ app.factory('appFactory', function ($http) {
 
 	factory.addGroup = function (data, callback) {
 
-		var newGroup = data.key + "-" + data.groupId + "-" + data.groupName + "-" + data.groupDesc;
+		var newGroup =  data.groupName + "-" + data.description;
 
 		$http.get('/add_group/' + newGroup).success(function (output) {
 			callback(output)

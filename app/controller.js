@@ -60,7 +60,7 @@ return{
 
 		    // queryAllGroups - requires no arguments , ex: args: [''],
 		    const request = {
-		        chaincodeId: 'cum-group',
+		        chaincodeId: 'cum-record',
 		        txId: tx_id,
 		        fcn: 'queryAllGroups',
 		        args: ['']
@@ -96,10 +96,9 @@ return{
 		var array = req.params.newGroup.split("-");
 		console.log(array);
 
-		var key       = array[0]
-		var groupId   = array[1]
-		var groupName = array[2]
-		var groupDesc = array[3]
+		
+		var groupName = array[0]
+		var description = array[1]
 
 		
 		// setup the fabric network
@@ -143,17 +142,13 @@ return{
 
 				// addGroup - requires 4 argument, ex: args: ['4004', 'AB12', "AnalogDev", "The description"],
 				const request = {
-						chaincodeId: 'cum-group',
+						chaincodeId: 'cum-record',
 						fcn: 'addGroup',
-						args: [key, groupId, groupName, groupDesc],
+						args: [groupName, description],
 						chainId: 'mychannel',
 						txId: tx_id
 				};
-
-				// OLD
-				//// send the query proposal to the peer
-				//return channel.queryByChaincode(request);
-
+				
                 // send the transaction proposal to the peers
                 return channel.sendTransactionProposal(request);
 
