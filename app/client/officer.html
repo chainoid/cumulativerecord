@@ -16,53 +16,60 @@
 
   <!-- adding style here -->
   <style type="text/css">
-     header{
-        background-color: rgb(155, 228, 177);
-        font-size:20px;
-        padding:15px;
-      }
-          
-      #body{
-        margin-left:3%;
-        margin-right:3%;
-      }
-      .form-control{
-        margin: 8px;
-      }
-      #right_header{
-        width:20%;
-        font-size:15px;
-        margin-right:0px;
-      }
-      #left_header{
-        margin-left:0;
-        width:40%;
-        display:inline-block;
-      }
-      #id {
-        width:49%;
-        display: inline-block;
-      }
+    header {
+      background-color: rgb(155, 228, 177);
+      font-size: 20px;
+      padding: 15px;
+    }
 
-      table {
-          font-family: arial, sans-serif;
-          border-collapse: collapse;
-          width: 100%;
-      }
-      td, th {
-          border: 1px solid #dddddd;
-          text-align: left;
-          padding: 8px;
-      }
-      tr:nth-child(even) {
-          background-color: #dddddd;
-      }
-      
-      .input-field {
-        width: 200px;
-        padding: 6px 1px;
-        margin-left: 0px;
-      }
+    #body {
+      margin-left: 3%;
+      margin-right: 3%;
+    }
+
+    .form-control {
+      margin: 8px;
+    }
+
+    #right_header {
+      width: 20%;
+      font-size: 15px;
+      margin-right: 0px;
+    }
+
+    #left_header {
+      margin-left: 0;
+      width: 40%;
+      display: inline-block;
+    }
+
+    #id {
+      width: 49%;
+      display: inline-block;
+    }
+
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+    .input-field {
+      width: 200px;
+      padding: 6px 1px;
+      margin-left: 0px;
+    }
   </style>
 </head>
 
@@ -74,19 +81,6 @@
 
   <div id="body">
 
-    <!--  Add the student into repository-->
-    <!-- TBD
-      <div class="form-group">
-        <label>Add student into repository</label><br>
-        <h5 style="color:red;margin-bottom:2%" id="error_add_student">Error: Please enter a valid student data</h5>
-        <h5 style="color:green;margin-bottom:2%" id="success_add_student">Congratulation: The new student has been added to repository!</h5>
-
-         Enter a student Id ( or scan the card ): <input id="createId" class="form-control" type="text" placeholder="Ex: A5V7A01" ng-model="student.studentId">
-         Enter a student name: <input id="studentName"  class="form-control" name="assetSelect2" type="text" placeholder="Ex: Smith" ng-model="student.studentName">
-         Enter a group name: <input id="groupName"  class="form-control" name="assetSelect3" type="text" placeholder="Ex: AB01" ng-model="student.groupName">
-        <input id="addStudent" type="submit" value="Add Student" class="btn btn-primary" ng-click="addStudent()">
-      </div>
-    -->
 
     <!--  Get all groups from repository-->
     <div class="form-group">
@@ -114,9 +108,56 @@
       <label>Add new group into repository</label><br>
       <h5 style="color:red;margin-bottom:2%" id="error_add_group">Error: Please enter a valid group data.</h5>
       <h5 style="color:green;margin-bottom:2%" id="success_add_group">The new croup added successfully.</h5>
-      Enter a group name:  <input id="groupName" class="form-control input-field" type="text" placeholder="Ex: " ng-model="newGroup.groupName">
-      Enter a description: <input id="groupDesc" class="form-control input-field"  type="text" placeholder="Ex: Description" ng-model="newGroup.description">
+      Enter a group name: <input id="groupName" class="form-control input-field" type="text" placeholder="Ex: "
+        ng-model="newGroup.groupName">
+      Enter a description: <input id="groupDesc" class="form-control input-field" type="text" placeholder="Ex: Description"
+        ng-model="newGroup.description">
       <input id="addGroup" type="submit" value="Add Group" class="btn btn-primary" ng-click="addGroup()">
+    </div>
+
+    <!--  Query all students in college-->
+    <div class="form-group">
+      <label>All Students in College</label>
+      <p><input id="queryAllStudents" type="submit" value="Query students" class="btn btn-primary" ng-click="queryAllStudents()"></p>
+    </div>
+
+    <table id="all_students" class="table" align="center">
+      <tr>
+        <th>ID</th>
+        <th>Student Id</th>
+        <th>Student Name</th>
+        <th>Group</th>
+        <th>Description</th>
+        <th>Register TS</th>
+        <th>Test Record</th>
+      </tr>
+      <tr ng-repeat="student in all_students">
+        <td>{{student.Key}}</td>
+        <td>{{student.studentId}}</td>
+        <td>{{student.studentName}}</td>
+        <td>{{student.groupName}}</td>
+        <td>{{student.description}}</td>
+        <td>{{student.registerTS}}</td>
+        <td> Records </td>
+      </tr>
+    </table>
+
+    <!--  Add the student into repository-->
+    <div class="form-group">
+      <label>Add student into repository</label><br>
+      <h5 style="color:red;margin-bottom:2%" id="error_add_student">Error: Please enter a valid student data</h5>
+      <h5 style="color:green;margin-bottom:2%" id="success_add_student">Congratulation: The new student has been added
+        to repository!</h5>
+
+      Enter a student Id ( or scan the card ): <input id="createId" class="form-control input-field" type="text"
+        placeholder="Ex: A5V7A01" ng-model="student.studentId">
+      Enter a student name: <input id="studentName" class="form-control input-field" name="assetSelect2" type="text"
+        placeholder="Ex: Smith" ng-model="student.studentName">
+      Enter a group name: <input id="groupName" class="form-control input-field" name="assetSelect3" type="text"
+        placeholder="Ex: AB01" ng-model="student.groupName">
+      Enter a description: <input id="groupDesc" class="form-control input-field" type="text" placeholder="Ex: Description"
+        ng-model="student.description">
+      <input id="addStudent" type="submit" value="Add Student" class="btn btn-primary" ng-click="addStudent()">
     </div>
 
     <!--  Query all tests in college-->
@@ -153,23 +194,25 @@
     <!--  Create exam  worksheet for one group/course/teacher case -->
     <div class="form-group">
       <div class="form-group">
-        <label>Generate empty Exam's Worksheet and put into Ledger</label><br>
+        <label>Generate empty Exam's Worksheet and put into Ledger</label>
+        <br>
         <h5 style="color:green;margin-bottom:2%" id="success_generated">Success! Tx ID: {{generated_test_group}}</h5>
         <h5 style="color:red;margin-bottom:2%" id="error_generated">Error: Please enter a valid data</h5>
         Enter a new key(initial number for group): <input class="form-control input-field" placeholder="Ex: 021"
           ng-model="generator.key">
         Enter a group name from available list above: <input class="form-control input-field" placeholder="Ex: 001"
           ng-model="generator.groupId">
-        Enter amount of group members: <input class="form-control input-field" name="assetSelect" placeholder="Ex: 30" ng-model="generator.groupSize">
+        Enter amount of group members: <input class="form-control input-field" name="assetSelect" placeholder="Ex: 30"
+          ng-model="generator.groupSize">
         Enter course name: <input class="form-control input-field" name="assetSelect" placeholder="Ex: Math" ng-model="generator.courseName">
         Enter teacher name: <input class="form-control input-field" name="assetSelect" placeholder="Ex: Smith" ng-model="generator.teacherName">
         <!-- TBD: The test deadline: <input class="form-control input-field" name="assetSelect" placeholder="Ex: 2014090811" ng-model="generator.deadlineTS"> -->
         <input id="createTestForGroup" type="submit" value="Generate" class="btn btn-primary" ng-click="createTestForGroup()">
       </div>
     </div>
-    
+
     <p><a href="index.html">Back to Main Page</a></p>
-    
+
 
 </body>
 <!-- requiring the angular page -->

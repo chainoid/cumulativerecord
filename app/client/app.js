@@ -23,6 +23,9 @@ app.controller('appController', function ($scope, appFactory) {
 	$("#error_add_group").hide();
 	$("#success_add_group").hide();
 
+	$("#error_add_student").hide();
+	$("#success_add_student").hide();
+
 	$scope.queryAllGroups = function () {
 
 		appFactory.queryAllGroups(function (data) {
@@ -51,6 +54,37 @@ app.controller('appController', function ($scope, appFactory) {
 			}
 
 			$scope.exam_result = data;
+		});
+	}
+
+    $scope.addStudent = function () {
+
+		appFactory.addStudent($scope.student, function (data) {
+
+			if (data == "Could not locate unpassed test") {
+				$("#error_add_student").show();
+				$("#success_add_student").hide();
+			} else {
+				$("#error_add_student").hide();
+				$("#success_add_student").show();
+			}
+
+			$scope.exam_result = data;
+		});
+	}
+
+	$scope.queryAllStudents = function () {
+
+		appFactory.queryAllStudents(function (data) {
+			var array = [];
+			for (var i = 0; i < data.length; i++) {
+				data[i].Record.Key = data[i].Key;
+				array.push(data[i].Record);
+			}
+			array.sort(function (a, b) {
+				return a.groupName.localeCompare(b.groupName);
+			});
+			$scope.all_students = array;
 		});
 	}
 
@@ -219,6 +253,22 @@ app.factory('appFactory', function ($http) {
 		});
 	}
 
+
+	factory.addStudent = function (data, callback) {
+
+		var student = data.studentId + "-" + data.studentName + "-" + data.groupName + "-" + data.description;
+
+		$http.get('/add_student/' + student).success(function (output) {
+			callback(output)
+		});
+	}
+
+	factory.queryAllStudents = function (callback) {
+
+		$http.get('/get_all_students/').success(function (output) {
+			callback(output)
+		});
+	}
 
 	factory.queryAllTests = function (callback) {
 

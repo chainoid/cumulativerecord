@@ -13,8 +13,14 @@ module.exports = function(app){
   });
 
   // The cum-rec area
+  app.get('/add_student/:student', function(req, res){
+    controller.add_student(req, res);
+  })
   app.get('/get_all_tests', function(req, res){
     controller.get_all_tests(req, res);
+  });
+  app.get('/get_all_students', function(req, res){
+    controller.get_all_students(req, res);
   });
   app.get('/create_test_group/:generator', function(req, res){
     controller.create_test_group(req, res);
