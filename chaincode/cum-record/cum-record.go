@@ -102,8 +102,6 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.addGroup(APIstub, args)
 	} else if function == "queryAllStudents" {
 		return s.queryAllStudents(APIstub)
-	} else if function == "queryAllTests" {
-		return s.queryAllTests(APIstub)
 	} else if function == "queryTestById" {
 		return s.queryTestById(APIstub, args)
 	} else if function == "createTestForGroup" {
@@ -142,7 +140,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	for i < len(stests) {
 		fmt.Println("i is ", i)
 		stestAsBytes, _ := json.Marshal(stests[i])
-		APIstub.PutState(fmt.Sprintf("%X", rand.Int()), stestAsBytes)
+		APIstub.PutState(fmt.Sprintf("%016d", rand.Int63n(1e16)), stestAsBytes)
 		fmt.Println("Added", stests[i])
 		i = i + 1
 	}
@@ -221,7 +219,7 @@ func (s *SmartContract) addGroup(APIstub shim.ChaincodeStubInterface, args []str
 	var groupRecord = StudentRecord{RecordType: "G", GroupName: args[0], Description: args[1]}
 
 	groupRecordAsBytes, _ := json.Marshal(groupRecord)
-	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), groupRecordAsBytes)
+	err := APIstub.PutState(fmt.Sprintf("%016d", rand.Int63n(1e16)), groupRecordAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to record new group: %s", args[0]))
 	}
@@ -239,13 +237,12 @@ func (s *SmartContract) addStudent(APIstub shim.ChaincodeStubInterface, args []s
 		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
-	// Starting index for records
-
+	// Fill the student date
 	var studentRecord = StudentRecord{RecordType: "S", StudentId: args[0], StudentName: args[1], GroupName: args[2], Description: args[3], RegisterTS: time.Now().Format(time.RFC3339)}
 
 	studentRecordAsBytes, _ := json.Marshal(studentRecord)
 
-	err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), studentRecordAsBytes)
+	err := APIstub.PutState(fmt.Sprintf("%016d", rand.Int63n(1e16)), studentRecordAsBytes)
 
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to add student to system with id: %s", args[0]))
@@ -312,57 +309,6 @@ func (s *SmartContract) queryAllStudents(APIstub shim.ChaincodeStubInterface) sc
 	fmt.Printf("- queryAllStudents:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
-}
-
-/*
- * The queryAllTests method *
-allows for assessing all the records added to the ledger(all groups in the delivery system)
-This method does not take any arguments. Returns JSON string containing results.
-*/
-func (s *SmartContract) queryAllTests(APIstub shim.ChaincodeStubInterface) sc.Response {
-
-	// startKey := "0"
-	// endKey := "9999"
-
-	// resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
-	// defer resultsIterator.Close()
-
-	// // buffer is a JSON array containing QueryResults
-	// var buffer bytes.Buffer
-	// buffer.WriteString("[")
-
-	// bArrayMemberAlreadyWritten := false
-	// for resultsIterator.HasNext() {
-	// 	queryResponse, err := resultsIterator.Next()
-	// 	if err != nil {
-	// 		return shim.Error(err.Error())
-	// 	}
-	// 	// Add comma before array members,suppress it for the first array member
-	// 	if bArrayMemberAlreadyWritten == true {
-	// 		buffer.WriteString(",")
-	// 	}
-	// 	buffer.WriteString("{\"Key\":")
-	// 	buffer.WriteString("\"")
-	// 	buffer.WriteString(queryResponse.Key)
-	// 	buffer.WriteString("\"")
-
-	// 	buffer.WriteString(", \"Record\":")
-	// 	// Record is a JSON object, so we write as-is
-	// 	buffer.WriteString(string(queryResponse.Value))
-	// 	buffer.WriteString("}")
-	// 	bArrayMemberAlreadyWritten = true
-	// }
-	// buffer.WriteString("]")
-
-	// fmt.Printf("- queryAllTests:\n%s\n", buffer.String())
-
-	// return shim.Success(buffer.Bytes())
-
-	// TODO remove
-	return shim.Success(nil)
 }
 
 /*

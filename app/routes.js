@@ -16,9 +16,6 @@ module.exports = function(app){
   app.get('/add_student/:student', function(req, res){
     controller.add_student(req, res);
   });
-  app.get('/get_all_tests', function(req, res){
-    controller.get_all_tests(req, res);
-  });
   app.get('/get_all_students', function(req, res){
     controller.get_all_students(req, res);
   });

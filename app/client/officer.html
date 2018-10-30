@@ -89,13 +89,11 @@
     </div>
 
     <table id="all_groups" class="table" align="center">
-
       <tr>
         <th>ID</th>
         <th>GroupName</th>
         <th>GroupDescription</th>
       </tr>
-
       <tr ng-repeat="group in all_groups">
         <td>{{group.Key}}</td>
         <td>{{group.groupName}}</td>
@@ -159,40 +157,7 @@
         ng-model="student.description">
       <input id="addStudent" type="submit" value="Add Student" class="btn btn-primary" ng-click="addStudent()">
     </div>
-
-    <!--  Query all tests in college-->
-    <!--
-    <div class="form-group">
-      <label>Query All Tests in College</label>
-      <p><input id="queryAllTests" type="submit" value="Query Tests" class="btn btn-primary" ng-click="queryAllTests()"></p>
-    </div>
-
-    <table id="all_tests" class="table" align="center">
-
-      <tr>
-        <th>ID</th>
-        <th>Test Id</th>
-        <th>Group</th>
-        <th>Course</th>
-        <th>Teacher</th>
-        <th>Student</th>
-        <th>Time</th>
-        <th>Rate</th>
-      </tr>
-
-      <tr ng-repeat="stest in all_tests">
-        <td>{{stest.Key}}</td>
-        <td>{{stest.testId}}</td>
-        <td>{{stest.group}}</td>
-        <td>{{stest.course}}</td>
-        <td>{{stest.teacher}}</td>
-        <td>{{stest.student}}</td>
-        <td>{{stest.stestTS}}</td>
-        <td>{{stest.rate}}</td>
-      </tr>
-    </table>
-  -->
-
+    
     <!--  Create exam  worksheet for one group/course/teacher case -->
     <div class="form-group">
        <label>Generate empty Exam's Worksheet and put into Ledger</label>

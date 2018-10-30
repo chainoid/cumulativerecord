@@ -15,6 +15,8 @@ app.controller('appController', function ($scope, appFactory) {
 	$("#error_query_student").hide();
 	$("#error_prepare_exam").hide();
 	$("#error_pass_exam").hide();
+	$("#error_student_record").hide();
+	
 
 	$("#error_exam_source").hide();
 	$("#error_old_exam").hide();
@@ -85,22 +87,6 @@ app.controller('appController', function ($scope, appFactory) {
 				return a.groupName.localeCompare(b.groupName);
 			});
 			$scope.all_students = array;
-		});
-	}
-
-
-	$scope.queryAllTests = function () {
-
-		appFactory.queryAllTests(function (data) {
-			var array = [];
-			for (var i = 0; i < data.length; i++) {
-				data[i].Record.Key = data[i].Key;
-				array.push(data[i].Record);
-			}
-			array.sort(function (a, b) {
-				return parseFloat(a.Key) - parseFloat(b.Key);
-			});
-			$scope.all_tests = array;
 		});
 	}
 
@@ -243,13 +229,6 @@ app.factory('appFactory', function ($http) {
 		});
 	}
 	
-	factory.queryAllTests = function (callback) {
-
-		$http.get('/get_all_tests/').success(function (output) {
-			callback(output)
-		});
-	}
-
 	factory.createTestForGroup = function (generator, callback) {
 
 		var generator = generator.groupName + "-" + generator.courseName + "-" + generator.teacherName;
