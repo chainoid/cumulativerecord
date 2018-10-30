@@ -104,7 +104,7 @@
           <td>{{exam.course}}</td>
           <td>{{exam.teacher}}</td>
           <td>{{exam.assignedTS}}</td>
-          <td>{{exam.stestTS}}</td>
+          <td>{{exam.executeTS}}</td>
           <td>{{exam.rate}}</td>
           <td>{{exam.description}}</td>
         </tr>
@@ -112,17 +112,18 @@
 
       <div class="form-group">
         <label>Pass an exam</label><br>
-        <h5 style="color:red;margin-bottom:2%"   id="error_exam_source">Error: Please enter a valid student/course data for unpassed test</h5>
+        <h5 style="color:red;margin-bottom:2%" id="error_exam_source">Error: Please enter a valid student/course data for unpassed test</h5>
         <!--h5 style="color:red;margin-bottom:2%"   id="error_old_exam">Error: The exam already passed.</h5-->
         <h5 style="color:green;margin-bottom:2%" id="success_exam">Congratulation: The exam has been approved!</h5>
-         Enter a test unique Id: <input id="createName" class="form-control input-field" type="text"    placeholder="Ex: AA01" ng-model="progress.testId">
-         Enter a student name: <input id="createName" class="form-control input-field" type="text"    placeholder="Ex: AA01" ng-model="progress.student">
-         Enter a course  name: <input class="form-control input-field" type="text" placeholder="Ex: Golang" ng-model="progress.course">
-         Enter an exam rate:   <input class="form-control input-field" type="text" placeholder="Ex: 5" ng-model="progress.rate">
-        <input id="takeTheTest" type="submit" value="TakeTest" class="btn btn-primary" ng-click="takeTheTest()">
+         Enter a student unique Id: <input id="createName" class="form-control input-field" type="text" placeholder="Ex: AA01" ng-model="examcase.studentId">
+         Enter a course name: <input class="form-control input-field" type="text" placeholder="Ex: Golang" ng-model="examcase.course">
+         Enter an exam rate:   <input class="form-control input-field" type="text" placeholder="Ex: 5" ng-model="examcase.rate">
+        <input id="takeTheTestId" type="submit" value="TakeTest" class="btn btn-primary" ng-click="takeTheTest()">
       </div>
 
      <p><a href="index.html">Back to Main Page</a></p>
+     <p><a href="officer.html">Officer Page</a></p>
+     <p><a href="student.html">Student Page</a></p>
 
     </div>
   </body>

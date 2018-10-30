@@ -930,15 +930,16 @@ return{
 	},
 
 	take_test: function(req, res){
-		console.log("Put a timestamp of exam, rate the student: ");
-
-		var array = req.params.exam.split("-");
-		var key = array[0]
-		var student = array[1];
-		var course = array[2];
-		var rate   = array[3];
+		
+		console.log("Put a timestamp of exam, rate the student, Params = " + req.params.examcase );
 
 		var fabric_client = new Fabric_Client();
+
+		var array   = req.params.examcase.split("-");
+		
+		var key     = array[0];
+		var course  = array[1];
+		var rate    = array[2];
 
 		// setup the fabric network
 		var channel = fabric_client.newChannel('mychannel');
@@ -978,13 +979,13 @@ return{
 		    tx_id = fabric_client.newTransactionID();
 		    console.log("Assigning transaction_id: ", tx_id._transaction_id);
 
-		    // deliveryParsel - requires 2 args , ex: args: ['1', '201921908999'],
+		    // takeTheTest - requires 3 args , ex: args: ['201921908999', 'Go', '5'],
 		    // send proposal to endorser
 		    var request = {
 		        //targets : --- letting this default to the peers assigned to the channel
 		        chaincodeId: 'cum-record',
 		        fcn: 'takeTheTest',
-		        args: [key, student, course, rate],
+		        args: [key, course, rate],
 		        chainId: 'mychannel',
 		        txId: tx_id
 		    };

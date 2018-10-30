@@ -470,7 +470,7 @@ func (s *SmartContract) prepareForExam(APIstub shim.ChaincodeStubInterface, args
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
-	fmt.Printf("- prepareForExam param args[1] :%s\n", args[1])
+	fmt.Printf("- prepareForExam param args[0] :%s  args[1] :%s\n", args[0], args[1])
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -581,39 +581,50 @@ func (s *SmartContract) prepareForExam(APIstub shim.ChaincodeStubInterface, args
  */
 func (s *SmartContract) takeTheTest(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	// if len(args) != 4 {
-	// 	return shim.Error("Incorrect number of arguments. Expecting 4")
-	// }
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
+	}
 
-	// stestAsBytes, _ := APIstub.GetState(args[0])
+	fmt.Printf("- takeTheTest param args[0] :%s  args[1] :%s args[3] :%s\n", args[0], args[1], args[2])
 
-	// if stestAsBytes == nil {
-	// 	return shim.Error("Could not locate unpassed test")
-	// }
+	studentRecordAsBytes, _ := APIstub.GetState(args[0])
 
-	// stest := Stest{}
+	if studentRecordAsBytes == nil {
+		return shim.Error("Could not locate selected student record")
+	}
 
-	// json.Unmarshal(stestAsBytes, &stest)
+	studentRecord := StudentRecord{}
 
-	// if stest.Rate != "" {
-	// 	return shim.Error("Could not locate unpassed test")
-	// }
+	json.Unmarshal(studentRecordAsBytes, &studentRecord)
 
-	// // Normally check that the specified argument is a valid participant of exam
-	// // we are skipping this check for this example
-	// stest.StestTS = time.Now().Format(time.RFC1123Z)
-	// stest.Rate = args[3]
+	// Looking for selected test by course name
+RecordListLoop:
 
-	// stestAsBytes, _ = json.Marshal(stest)
-	// err := APIstub.PutState(args[0], stestAsBytes)
-	// if err != nil {
-	// 	return shim.Error(fmt.Sprintf("Failed to change status of exam: %s", args[0]))
-	// }
+	for i := 0; i < len(studentRecord.RecordList); i++ {
 
-	// return shim.Success(stestAsBytes)
+		if studentRecord.RecordList[i].Course == args[1] {
 
-	// TODO delete
-	return shim.Success(nil)
+			if studentRecord.RecordList[i].Rate != "" {
+				return shim.Error("Selected test already passed.")
+			}
+
+			studentRecord.RecordList[i].Rate = args[2]
+			studentRecord.RecordList[i].ExecuteTS = time.Now().Format(time.RFC1123Z)
+			//studentRecord.RecordList[i].ExecuteDesc = args[3]
+
+			studentRecordAsBytes, _ := json.Marshal(studentRecord)
+
+			err := APIstub.PutState(args[0], studentRecordAsBytes)
+
+			if err != nil {
+				return shim.Error(fmt.Sprintf("Failed to change status of student record %s", args[0]))
+			}
+
+			break RecordListLoop
+		}
+	}
+
+	return shim.Success(studentRecordAsBytes)
 }
 
 /*

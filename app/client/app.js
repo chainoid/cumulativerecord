@@ -147,8 +147,13 @@ app.controller('appController', function ($scope, appFactory) {
 			if ($scope.student_record == "Student record not found"){
 				console.log()
 				$("#error_student_record").show();
+				$("#student_record").hide();
+				$("#student_record2").hide();
+				
 			} else{
 				$("#error_student_record").hide();
+				$("#student_record").show();
+				$("#student_record2").show();
 			}
 		});
 	}
@@ -181,9 +186,9 @@ app.controller('appController', function ($scope, appFactory) {
 
 	$scope.takeTheTest = function () {
 
-		var progress = $scope.progress;
+		var examcase = $scope.examcase;
 
-		appFactory.takeTheTest(progress, function (data) {
+		appFactory.takeTheTest(examcase, function (data) {
 
 			if (data == "Could not locate unpassed test") {
 				$("#error_exam_source").show();
@@ -237,7 +242,7 @@ app.factory('appFactory', function ($http) {
 			callback(output)
 		});
 	}
-
+	
 	factory.queryAllTests = function (callback) {
 
 		$http.get('/get_all_tests/').success(function (output) {
@@ -275,11 +280,11 @@ app.factory('appFactory', function ($http) {
 		});
 	}
 
-	factory.takeTheTest = function (data, callback) {
+	factory.takeTheTest = function (input, callback) {
 
-		var testCase = data.testId + "-" + data.student + "-" + data.course + "-" + data.rate;
+		var params = input.studentId + "-" + input.course + "-" + input.rate;
 
-		$http.get('/take_test/' + testCase).success(function (output) {
+		$http.get('/take_test/' + params).success(function (output) {
 			callback(output)
 		});
 	}

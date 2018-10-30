@@ -15,7 +15,7 @@ module.exports = function(app){
   // The cum-rec area
   app.get('/add_student/:student', function(req, res){
     controller.add_student(req, res);
-  })
+  });
   app.get('/get_all_tests', function(req, res){
     controller.get_all_tests(req, res);
   });
@@ -33,12 +33,12 @@ module.exports = function(app){
   });
   app.get('/get_student_record/:id', function(req, res){
       controller.get_student_record(req, res);
-  })
+  });
   app.get('/prepare_exam/:exam', function(req, res){
       controller.prepare_exam(req, res);
-  })
-  app.get('/take_test/:exam', function(req, res){
+  });
+  app.get('/take_test/:examcase', function(req, res){
       controller.take_test(req, res);
-  })
+  });
 
 }
