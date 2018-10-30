@@ -16,8 +16,8 @@ app.controller('appController', function ($scope, appFactory) {
 	$("#error_prepare_exam").hide();
 	$("#error_pass_exam").hide();
 	$("#error_student_record").hide();
+	$("#exam_list").hide();
 	
-
 	$("#error_exam_source").hide();
 	$("#error_old_exam").hide();
 	$("#success_exam").hide();
@@ -27,6 +27,8 @@ app.controller('appController', function ($scope, appFactory) {
 
 	$("#error_add_student").hide();
 	$("#success_add_student").hide();
+
+	$("#take_form").hide();
 
 	$scope.queryAllGroups = function () {
 
@@ -153,8 +155,11 @@ app.controller('appController', function ($scope, appFactory) {
 			if (data == "No group/course found") {
 				console.log()
 				$("#error_prepare_exam").show();
+				$("#exam_list").hide();
+			
 			} else {
 				$("#error_prepare_exam").hide();
+				$("#exam_list").show();
 			}
 
 			var array = [];
@@ -170,6 +175,20 @@ app.controller('appController', function ($scope, appFactory) {
 		});
 	}
 
+
+	$scope.beforeTakeTheTest = function (exam) {
+		        
+          if (exam.rate != "") {
+			$("#takeTheTestId").hide();	 
+			$("#take_form").hide(); 
+		  } else {
+			$("#takeTheTestId").show();	
+			$("#take_form").show();
+			$("#success_exam").show();
+		  }
+		  $scope.examcase = exam;
+	}
+
 	$scope.takeTheTest = function () {
 
 		var examcase = $scope.examcase;
@@ -179,11 +198,11 @@ app.controller('appController', function ($scope, appFactory) {
 			if (data == "Could not locate unpassed test") {
 				$("#error_exam_source").show();
 				$("#success_exam").hide();
-			} else {
+			} else {	
 				$("#error_exam_source").hide();
 				$("#success_exam").show();
 			}
-
+			
 			$scope.exam_result = data;
 		});
 	}

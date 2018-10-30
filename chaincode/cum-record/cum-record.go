@@ -106,14 +106,14 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryTestById(APIstub, args)
 	} else if function == "createTestForGroup" {
 		return s.createTestForGroup(APIstub, args)
-	} else if function == "getStudentRecord" {
-		return s.getStudentRecord(APIstub, args)
 	} else if function == "prepareForExam" {
 		return s.prepareForExam(APIstub, args)
 	} else if function == "takeTheTest" {
 		return s.takeTheTest(APIstub, args)
 	} else if function == "addStudent" {
 		return s.addStudent(APIstub, args)
+	} else if function == "getStudentRecord" {
+		return s.getStudentRecord(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
