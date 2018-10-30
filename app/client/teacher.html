@@ -74,7 +74,7 @@
     <div id="body">
 
       <div class="form-group">
-        <label>Query a test list for selected group and course</label><br>
+        <label>Prepare the exam list for selected group and course</label><br>
         <h5 style="color:red;margin-bottom:2%" id="error_prepare_exam">Error: Please enter a valid group/course data</h5>
          Enter a group name:  <input id="createName" class="form-control input-field" type="text" placeholder="Ex: AA01" ng-model="exam.group">
          Enter a course name: <input class="form-control input-field" name="assetSelect" type="text" placeholder="Ex: Golang" ng-model="exam.course">
@@ -87,24 +87,26 @@
           <th>ID</th>
           <th>Test Id</th>
           <th>Group</th>
+          <th>Student</th>
           <th>Course</th>
           <th>Teacher</th>
-          <th>Student</th>
-          <th>Time</th>
-
+          <th>Assigned Time</th>
+          <th>Exam Time</th>
           <th>Rate</th>
+          <th>Description</th>
         </tr>
 
-        <tr ng-repeat="stest in exam_list">
-          <td>{{stest.Key}}</td>
-          <td>{{stest.testId}}</td>
-          <td>{{stest.group}}</td>
-          <td>{{stest.course}}</td>
-
-          <td>{{stest.teacher}}</td>
-          <td>{{stest.student}}</td>
-          <td>{{stest.stestTS}}</td>
-          <td>{{stest.rate}}</td>
+        <tr ng-repeat="exam in exam_list">
+          <td>{{exam.Key}}</td>
+          <td>{{exam.testId}}</td>
+          <td>{{exam.group}}</td>
+          <td>{{exam.studentName}}</td>
+          <td>{{exam.course}}</td>
+          <td>{{exam.teacher}}</td>
+          <td>{{exam.assignedTS}}</td>
+          <td>{{exam.stestTS}}</td>
+          <td>{{exam.rate}}</td>
+          <td>{{exam.description}}</td>
         </tr>
       </table>
 

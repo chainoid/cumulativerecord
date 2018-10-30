@@ -31,8 +31,8 @@ module.exports = function(app){
   app.get('/get_test_id/:id', function(req, res){
     controller.get_test_id(req, res);
   });
-  app.get('/get_student_test_list/:name', function(req, res){
-      controller.get_student_test_list(req, res);
+  app.get('/get_student_record/:id', function(req, res){
+      controller.get_student_record(req, res);
   })
   app.get('/prepare_exam/:exam', function(req, res){
       controller.prepare_exam(req, res);

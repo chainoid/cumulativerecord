@@ -115,24 +115,6 @@ app.controller('appController', function ($scope, appFactory) {
 			} else {
 				$("#error_generated").hide();
 				$("#success_generated").show();
-
-				$scope.takeTheTest = function () {
-
-					var progress = $scope.progress;
-
-					appFactory.takeTheTest(progress, function (data) {
-
-						if (data == "Could not locate unpassed test") {
-							$("#error_exam_source").show();
-							$("#success_exam").hide();
-						} else {
-							$("#error_exam_source").hide();
-							$("#success_exam").show();
-						}
-
-						$scope.exam_result = data;
-					});
-				}
 			}
 
 		});
@@ -154,34 +136,20 @@ app.controller('appController', function ($scope, appFactory) {
 		});
 	}
 
-	$scope.queryTestByStudent = function () {
+	$scope.getStudentRecord = function () {
+		
+		var id = $scope.id;
 
-		var name = $scope.student_name;
+		appFactory.getStudentRecord(id, function(data){
 
-		appFactory.queryTestByStudent(name, function (data) {
+			$scope.student_record = data;
 
-			var array = [];
-
-			if (data == "No tests for student") {
+			if ($scope.student_record == "Student record not found"){
 				console.log()
-				$("#error_query_student").show();
-			} else {
-				$("#error_query_student").hide();
-
-				for (var i = 0; i < data.length; i++) {
-					parseInt(data[i].Key);
-					data[i].Record.Key = parseInt(data[i].Key);
-					array.push(data[i].Record);
-				}
-				array.sort(function (a, b) {
-					return parseFloat(a.Key) - parseFloat(b.Key);
-				});
-
+				$("#error_student_record").show();
+			} else{
+				$("#error_student_record").hide();
 			}
-
-			$scope.student_tests = array;
-
-
 		});
 	}
 
@@ -200,8 +168,8 @@ app.controller('appController', function ($scope, appFactory) {
 
 			var array = [];
 			for (var i = 0; i < data.length; i++) {
-				parseInt(data[i].Key);
-				data[i].Record.Key = parseInt(data[i].Key);
+				//parseInt(data[i].Key);
+				data[i].Record.Key = data[i].Key;
 				array.push(data[i].Record);
 			}
 			array.sort(function (a, b) {
@@ -279,7 +247,7 @@ app.factory('appFactory', function ($http) {
 
 	factory.createTestForGroup = function (generator, callback) {
 
-		var generator = generator.key + "-" + generator.groupId + "-" + generator.groupSize + "-" + generator.courseName + "-" + generator.teacherName + "-" + generator.deadlineTS;
+		var generator = generator.groupName + "-" + generator.courseName + "-" + generator.teacherName;
 
 		$http.get('/create_test_group/' + generator).success(function (output) {
 			callback(output)
@@ -292,8 +260,8 @@ app.factory('appFactory', function ($http) {
 		});
 	}
 
-	factory.queryTestByStudent = function (name, callback) {
-		$http.get('/get_student_test_list/' + name).success(function (output) {
+	factory.getStudentRecord = function (id, callback) {
+		$http.get('/get_student_record/' + id).success(function (output) {
 			callback(output)
 		});
 	}

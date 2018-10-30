@@ -73,36 +73,57 @@
     <div id="body">
 
       <div class="form-group">
-        <label>Query Tests by Student</label><br>
-        <h5 style="color:red;margin-bottom:2%" id="error_query_student">Error: Test(s) for selected student not found</h5>
-               Enter a student name: <input id="studentName" class="form-control input-field" type="text" placeholder="Ex: AB1701" ng-model="student_name">
+        <label>Query Student's Record</label><br>
+        <h5 style="color:red;margin-bottom:2%" id="error_student_record">Error: Record(s) for selected student not found</h5>
+               Enter a student ID: <input id="studentName" class="form-control input-field" type="text" placeholder="Ex: 365A858149C6E2D1" ng-model="id">
 
-        <input id="queryTestByStudentId" type="submit" value="Query" class="btn btn-primary" ng-click="queryTestByStudent()">
+        <input id="getStudentRecordId" type="submit" value="Query" class="btn btn-primary" ng-click="getStudentRecord()">
         </div>
 
-      <table id="student_tests" class="table" align="center">
+        <table id="student_record" class="table" align="center">
+
+          <tr>
+            <th>Record type</th>
+            <th>Group</th>
+            <th>Student ID</th>
+            <th>Student name</th>
+            <th>Registered</th> 
+          </tr>
+  
+          <tr>
+            <td>{{student_record.recordType}}</td>
+            <td>{{student_record.groupName}}</td>
+            <td>{{student_record.studentId}}</td>
+            <td>{{student_record.studentName}}</td>
+            <td>{{student_record.registerTS}}</td> 
+          </tr>
+        </table>
+
+      <table id="student_record" class="table" align="center">
 
         <tr >
-          <th>ID</th>
-          <th>Student</th>
+          <th>TestID</th>
+          <th>Student</th> 
           <th>Course</th>
           <th>Teacher</th>
+          <th>Assigned TS</th>
           <th>Rate</th>
-          <th>Timestamp</th>
-          <th>Description</th>
+          <th>Executed</th>
+          <th>Description</th> 
         </tr>
 
-        <tr ng-repeat="stest in student_tests">
-          <td>{{stest.Key}}</td>
-          <td>{{stest.student}}</td>
-          <td>{{stest.course}}</td>
-          <td>{{stest.teacher}}</td>
-          <td>{{stest.rate}}</td>
-          <td>{{stest.stestTS}}</td>
-          <td>{{stest.stestDesc}}</td>
+        <tr ng-repeat="record in student_record.recordList">
+          <td>{{record.testId}}</td>
+          <td>{{student_record.studentName}}</td> 
+          <td>{{record.course}}</td>
+          <td>{{record.teacher}}</td>
+          <td>{{record.assignedTS}}</td>
+          <td>{{record.rate}}</td>
+          <td>{{record.executeTS}}</td>
+          <td>{{record.executeDesc}}</td> 
         </tr>
       </table>
-     
+
      <p><a href="index.html">Back to Main Page</a></p>
 
     </div>

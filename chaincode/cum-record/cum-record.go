@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -32,7 +31,7 @@ type RecordType string
 const (
 	GroupType   RecordType = "G"
 	StudentType RecordType = "S"
-	TeacherType RecordType = "T"
+	TeacherType RecordType = "T" // For future use
 )
 
 // Define the Smart Contract structure
@@ -43,11 +42,13 @@ type SmartContract struct {
 Structure tags are used by encoding/json library
 */
 type StudentRecord struct {
-	RecordType  string `json:"recordType"`
-	GroupName   string `json:"groupName"`
-	StudentId   string `json:"studentId"`
-	StudentName string `json:"studentName"`
-	Description string `json:"description"`
+	RecordType  string        `json:"recordType"`
+	GroupName   string        `json:"groupName"`
+	StudentId   string        `json:"studentId"`
+	StudentName string        `json:"studentName"`
+	Description string        `json:"description"`
+	RegisterTS  string        `json:"registerTS"`
+	RecordList  []StudentTest `json:"recordList"`
 }
 
 /* Define Student structure, with several properties.
@@ -59,27 +60,18 @@ type Student struct {
 	GroupName   string `json:"groupName"`
 }
 
-/* Define Student Test structure, with several properties.eeeeeeeeeeeeeeeeeeee
+/* Define Student Test structure, with several properties
 Structure tags are used by encoding/json library
 */
-type Stest struct {
-	StestId string `json:"testId"`
-
-	Group string `json:"group"`
-
-	Course string `json:"course"`
-
-	Teacher string `json:"teacher"`
-
-	StudentId string `json:"studentId"`
-
-	Student string `json:"student"`
-
-	Rate string `json:"rate"`
-
-	StestTS string `json:"stestTS"`
-
-	StestDesc string `json:"stestDesc"`
+type StudentTest struct {
+	StestId     string `json:"testId"`
+	Group       string `json:"group"`
+	Course      string `json:"course"`
+	Teacher     string `json:"teacher"`
+	AssignedTS  string `json:"assignedTS"`
+	Rate        string `json:"rate"`
+	ExecuteTS   string `json:"executeTS"`
+	ExecuteDesc string `json:"executeDesc"`
 }
 
 /*
@@ -108,14 +100,16 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAllGroups(APIstub)
 	} else if function == "addGroup" {
 		return s.addGroup(APIstub, args)
+	} else if function == "queryAllStudents" {
+		return s.queryAllStudents(APIstub)
 	} else if function == "queryAllTests" {
 		return s.queryAllTests(APIstub)
 	} else if function == "queryTestById" {
 		return s.queryTestById(APIstub, args)
 	} else if function == "createTestForGroup" {
 		return s.createTestForGroup(APIstub, args)
-	} else if function == "queryTestByStudent" {
-		return s.queryTestByStudent(APIstub, args)
+	} else if function == "getStudentRecord" {
+		return s.getStudentRecord(APIstub, args)
 	} else if function == "prepareForExam" {
 		return s.prepareForExam(APIstub, args)
 	} else if function == "takeTheTest" {
@@ -129,12 +123,19 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 
 /*
  * The initLedger method
- * Will add records to our network
+ * Will add group and student records to our network
  */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	stests := []StudentRecord{
-		StudentRecord{RecordType: "G", GroupName: "AB17", StudentId: "AB1701", StudentName: "StudentOne", Description: "Desc AB17"},
-		StudentRecord{RecordType: "G", GroupName: "AB18", StudentId: "AB1701", StudentName: "StudentTwo", Description: "Desc AB18"},
+		StudentRecord{RecordType: "G", GroupName: "AB17", Description: "Desc AB17"},
+		StudentRecord{RecordType: "G", GroupName: "AB18", Description: "Desc AB18"},
+		StudentRecord{RecordType: "G", GroupName: "AB19", Description: "Desc AB19"},
+		StudentRecord{RecordType: "G", GroupName: "AB20", Description: "Desc AB20"},
+
+		StudentRecord{RecordType: "S", GroupName: "AB17", StudentId: "AB1701", StudentName: "Student 1701", RegisterTS: time.Now().Format(time.RFC3339), Description: "Desc 1701"},
+		StudentRecord{RecordType: "S", GroupName: "AB17", StudentId: "AB1702", StudentName: "Student 1702", RegisterTS: time.Now().Format(time.RFC3339), Description: "Desc 1702"},
+		StudentRecord{RecordType: "S", GroupName: "AB17", StudentId: "AB1703", StudentName: "Student 1703", RegisterTS: time.Now().Format(time.RFC3339), Description: "Desc 1703"},
+		StudentRecord{RecordType: "S", GroupName: "AB17", StudentId: "AB1704", StudentName: "Student 1704", RegisterTS: time.Now().Format(time.RFC3339), Description: "Desc 1704"},
 	}
 
 	i := 0
@@ -151,7 +152,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 
 /*
  * The queryAllGroups method *
-allows for assessing all the records added to the ledger(all groups in the delivery system)
+allows for assessing all group records added to the ledger(all groups in the cumulative system)
 This method does not take any arguments. Returns JSON string containing results.
 */
 func (s *SmartContract) queryAllGroups(APIstub shim.ChaincodeStubInterface) sc.Response {
@@ -240,7 +241,7 @@ func (s *SmartContract) addStudent(APIstub shim.ChaincodeStubInterface, args []s
 
 	// Starting index for records
 
-	var studentRecord = StudentRecord{RecordType: "S", StudentId: args[0], StudentName: args[1], GroupName: args[2]}
+	var studentRecord = StudentRecord{RecordType: "S", StudentId: args[0], StudentName: args[1], GroupName: args[2], Description: args[3], RegisterTS: time.Now().Format(time.RFC3339)}
 
 	studentRecordAsBytes, _ := json.Marshal(studentRecord)
 
@@ -250,17 +251,17 @@ func (s *SmartContract) addStudent(APIstub shim.ChaincodeStubInterface, args []s
 		return shim.Error(fmt.Sprintf("Failed to add student to system with id: %s", args[0]))
 	}
 
-	fmt.Println("Added sudent with id: %s ", args[0])
+	fmt.Println("Added student with id: ", args[0])
 
 	return shim.Success(nil)
 }
 
 /*
- * The queryAllTests method *
-allows for assessing all the records added to the ledger(all groups in the delivery system)
+ * The queryAllStudents method *
+allows for assessing all student records added to the ledger
 This method does not take any arguments. Returns JSON string containing results.
 */
-func (s *SmartContract) queryAllTests(APIstub shim.ChaincodeStubInterface) sc.Response {
+func (s *SmartContract) queryAllStudents(APIstub shim.ChaincodeStubInterface) sc.Response {
 
 	startKey := "0"
 	endKey := "9999"
@@ -281,26 +282,87 @@ func (s *SmartContract) queryAllTests(APIstub shim.ChaincodeStubInterface) sc.Re
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		// Add comma before array members,suppress it for the first array member
-		if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",")
-		}
-		buffer.WriteString("{\"Key\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(queryResponse.Key)
-		buffer.WriteString("\"")
 
-		buffer.WriteString(", \"Record\":")
-		// Record is a JSON object, so we write as-is
-		buffer.WriteString(string(queryResponse.Value))
-		buffer.WriteString("}")
-		bArrayMemberAlreadyWritten = true
+		// Create an object
+		studentRecord := StudentRecord{}
+		// Unmarshal record to stest object
+		json.Unmarshal(queryResponse.Value, &studentRecord)
+
+		// Add only filtered by RecordType as Group records
+		if studentRecord.RecordType == "S" {
+
+			// Add comma before array members,suppress it for the first array member
+			if bArrayMemberAlreadyWritten == true {
+				buffer.WriteString(",")
+			}
+			buffer.WriteString("{\"Key\":")
+			buffer.WriteString("\"")
+			buffer.WriteString(queryResponse.Key)
+			buffer.WriteString("\"")
+
+			buffer.WriteString(", \"Record\":")
+			// Record is a JSON object, so we write as-is
+			buffer.WriteString(string(queryResponse.Value))
+			buffer.WriteString("}")
+			bArrayMemberAlreadyWritten = true
+		}
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- queryAllTests:\n%s\n", buffer.String())
+	fmt.Printf("- queryAllStudents:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
+}
+
+/*
+ * The queryAllTests method *
+allows for assessing all the records added to the ledger(all groups in the delivery system)
+This method does not take any arguments. Returns JSON string containing results.
+*/
+func (s *SmartContract) queryAllTests(APIstub shim.ChaincodeStubInterface) sc.Response {
+
+	// startKey := "0"
+	// endKey := "9999"
+
+	// resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// defer resultsIterator.Close()
+
+	// // buffer is a JSON array containing QueryResults
+	// var buffer bytes.Buffer
+	// buffer.WriteString("[")
+
+	// bArrayMemberAlreadyWritten := false
+	// for resultsIterator.HasNext() {
+	// 	queryResponse, err := resultsIterator.Next()
+	// 	if err != nil {
+	// 		return shim.Error(err.Error())
+	// 	}
+	// 	// Add comma before array members,suppress it for the first array member
+	// 	if bArrayMemberAlreadyWritten == true {
+	// 		buffer.WriteString(",")
+	// 	}
+	// 	buffer.WriteString("{\"Key\":")
+	// 	buffer.WriteString("\"")
+	// 	buffer.WriteString(queryResponse.Key)
+	// 	buffer.WriteString("\"")
+
+	// 	buffer.WriteString(", \"Record\":")
+	// 	// Record is a JSON object, so we write as-is
+	// 	buffer.WriteString(string(queryResponse.Value))
+	// 	buffer.WriteString("}")
+	// 	bArrayMemberAlreadyWritten = true
+	// }
+	// buffer.WriteString("]")
+
+	// fmt.Printf("- queryAllTests:\n%s\n", buffer.String())
+
+	// return shim.Success(buffer.Bytes())
+
+	// TODO remove
+	return shim.Success(nil)
 }
 
 /*
@@ -323,55 +385,14 @@ func (s *SmartContract) queryTestById(APIstub shim.ChaincodeStubInterface, args 
 }
 
 /* The createTestForGroup method *
-   Generate list of records for one exam/course/teacher
+   Generate list of records for one group/course/teacher
    This method takes in four arguments (attributes to be saved in the ledger).
 */
 func (s *SmartContract) createTestForGroup(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 6 {
-		return shim.Error("Incorrect number of arguments. Expecting 6")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
-
-	i := 0
-
-	// Counter of added records
-	var counter int
-	counter, _ = strconv.Atoi(args[2])
-
-	// Starting index for records
-	var startIndex int
-	startIndex, _ = strconv.Atoi(args[0])
-
-	for i < counter {
-
-		// Combine student id
-		studentName := args[1] + strconv.Itoa(i)
-
-		var stest = Stest{StestId: strconv.Itoa(startIndex + i), Group: args[1], Course: args[3], Teacher: args[4], Student: studentName, Rate: "", StestTS: "", StestDesc: ""}
-
-		stestAsBytes, _ := json.Marshal(stest)
-
-		err := APIstub.PutState(fmt.Sprintf("%X", rand.Int()), stestAsBytes)
-
-		if err != nil {
-			return shim.Error(fmt.Sprintf("Failed to record new test for the group: %s", args[0]))
-		}
-
-		fmt.Println("Added", stest)
-		i = i + 1
-	}
-
-	return shim.Success(nil)
-}
-
-/*
- * The queryTestByStudent method *
-   allows for assessing all the records from selected student
-
-    Returns JSON string containing results.
-*/
-
-func (s *SmartContract) queryTestByStudent(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	startKey := "0"
 	endKey := "9999"
@@ -382,52 +403,55 @@ func (s *SmartContract) queryTestByStudent(APIstub shim.ChaincodeStubInterface, 
 	}
 	defer resultsIterator.Close()
 
-	// buffer is a JSON array containing QueryResults
-	var buffer bytes.Buffer
-
-	buffer.WriteString("[")
-
-	bArrayMemberAlreadyWritten := false
 	for resultsIterator.HasNext() {
+
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
 
 		// Create an object
-		stest := Stest{}
+		studentRecord := StudentRecord{}
 		// Unmarshal record to stest object
-		json.Unmarshal(queryResponse.Value, &stest)
+		json.Unmarshal(queryResponse.Value, &studentRecord)
 
-		// Add only filtered ny sender records
-		if stest.Student == args[0] {
+		if studentRecord.GroupName == args[0] {
+			var studentTest = StudentTest{StestId: fmt.Sprintf("%X", rand.Int()), Group: args[0], Course: args[1], Teacher: args[2],
+				AssignedTS: time.Now().Format(time.RFC1123Z), ExecuteDesc: ""}
 
-			// Add comma before array members,suppress it for the first array member
-			if bArrayMemberAlreadyWritten == true {
-				buffer.WriteString(",")
-			}
+			studentRecord.RecordList = append(studentRecord.RecordList, studentTest)
 
-			buffer.WriteString("{\"Key\":")
-			buffer.WriteString("\"")
-			buffer.WriteString(queryResponse.Key)
-			buffer.WriteString("\"")
+			studentRecordAsBytes, _ := json.Marshal(studentRecord)
 
-			buffer.WriteString(", \"Record\":")
-			// Record is a JSON object, so we write as-is
-			buffer.WriteString(string(queryResponse.Value))
-			buffer.WriteString("}")
-			bArrayMemberAlreadyWritten = true
+			APIstub.PutState(queryResponse.Key, studentRecordAsBytes)
+
+			fmt.Println("Added", studentTest)
 		}
-	}
-	buffer.WriteString("]")
 
-	if bArrayMemberAlreadyWritten == false {
-		return shim.Error("No tests for student")
 	}
 
-	fmt.Printf("- queryTestByStudent:\n%s\n", buffer.String())
+	return shim.Success(nil)
+}
 
-	return shim.Success(buffer.Bytes())
+/*
+ * The getStudentRecord method *
+   allows for assessing all the records from selected student
+
+    Returns JSON string containing results.
+*/
+
+func (s *SmartContract) getStudentRecord(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	studentRecordAsBytes, err := APIstub.GetState(args[0])
+	if err != nil {
+		return shim.Error("Could not locate student data")
+	}
+
+	return shim.Success(studentRecordAsBytes)
 }
 
 /*
@@ -446,50 +470,99 @@ func (s *SmartContract) prepareForExam(APIstub shim.ChaincodeStubInterface, args
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
+	fmt.Printf("- prepareForExam param args[1] :%s\n", args[1])
+
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 	defer resultsIterator.Close()
 
-	// buffer is a JSON array containing QueryResults
+	// buffer is a JSON array containing Results
 	var buffer bytes.Buffer
 
 	buffer.WriteString("[")
-
 	bArrayMemberAlreadyWritten := false
+
+	// Iteration my the Student Record List
 	for resultsIterator.HasNext() {
+
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
 
 		// Create an object
-		stest := Stest{}
+		studentRecord := StudentRecord{}
 		// Unmarshal record to stest object
-		json.Unmarshal(queryResponse.Value, &stest)
+		json.Unmarshal(queryResponse.Value, &studentRecord)
 
-		// Add only filtered ny sender records
+		// Selection by the Record type and Group name
+		if studentRecord.RecordType == "S" && studentRecord.GroupName == args[0] {
 
-		if stest.Group == args[0] && stest.Course == args[1] {
+			// Iteration by the Course
 
-			// Add comma before array members,suppress it for the first array member
-			if bArrayMemberAlreadyWritten == true {
-				buffer.WriteString(",")
+			for i := 0; i < len(studentRecord.RecordList); i++ {
+
+				if studentRecord.RecordList[i].Course == args[1] {
+
+					// Add comma before array members,suppress it for the first array member
+					if bArrayMemberAlreadyWritten == true {
+						buffer.WriteString(",")
+					}
+
+					buffer.WriteString("{\"Key\":")
+					buffer.WriteString("\"")
+					buffer.WriteString(queryResponse.Key)
+					buffer.WriteString("\"")
+					buffer.WriteString(", \"Record\":")
+
+					// Put only selected fields
+					buffer.WriteString("{\"studentId\":\"")
+					buffer.WriteString(queryResponse.Key)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"testId\":\"")
+					buffer.WriteString(studentRecord.RecordList[i].StestId)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"studentName\":\"")
+					buffer.WriteString(studentRecord.StudentName)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"group\":\"")
+					buffer.WriteString(studentRecord.GroupName)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"course\":\"")
+					buffer.WriteString(studentRecord.RecordList[i].Course)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"assignedTS\":\"")
+					buffer.WriteString(studentRecord.RecordList[i].AssignedTS)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"teacher\":\"")
+					buffer.WriteString(studentRecord.RecordList[i].Teacher)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"executeTS\":\"")
+					buffer.WriteString(studentRecord.RecordList[i].ExecuteTS)
+					buffer.WriteString("\",")
+
+					buffer.WriteString("\"rate\":\"")
+					buffer.WriteString(studentRecord.RecordList[i].Rate)
+					buffer.WriteString("\"")
+
+					buffer.WriteString("}")
+
+					buffer.WriteString("}")
+					bArrayMemberAlreadyWritten = true
+				}
 			}
-
-			buffer.WriteString("{\"Key\":")
-			buffer.WriteString("\"")
-			buffer.WriteString(queryResponse.Key)
-			buffer.WriteString("\"")
-
-			buffer.WriteString(", \"Record\":")
-			// Record is a JSON object, so we write as-is
-			buffer.WriteString(string(queryResponse.Value))
-			buffer.WriteString("}")
-			bArrayMemberAlreadyWritten = true
 		}
 	}
+
 	buffer.WriteString("]")
 
 	if bArrayMemberAlreadyWritten == false {
@@ -499,6 +572,7 @@ func (s *SmartContract) prepareForExam(APIstub shim.ChaincodeStubInterface, args
 	fmt.Printf("- prepareForExam:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
+
 }
 
 /*
@@ -507,36 +581,39 @@ func (s *SmartContract) prepareForExam(APIstub shim.ChaincodeStubInterface, args
  */
 func (s *SmartContract) takeTheTest(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments. Expecting 4")
-	}
+	// if len(args) != 4 {
+	// 	return shim.Error("Incorrect number of arguments. Expecting 4")
+	// }
 
-	stestAsBytes, _ := APIstub.GetState(args[0])
+	// stestAsBytes, _ := APIstub.GetState(args[0])
 
-	if stestAsBytes == nil {
-		return shim.Error("Could not locate unpassed test")
-	}
+	// if stestAsBytes == nil {
+	// 	return shim.Error("Could not locate unpassed test")
+	// }
 
-	stest := Stest{}
+	// stest := Stest{}
 
-	json.Unmarshal(stestAsBytes, &stest)
+	// json.Unmarshal(stestAsBytes, &stest)
 
-	if stest.Rate != "" {
-		return shim.Error("Could not locate unpassed test")
-	}
+	// if stest.Rate != "" {
+	// 	return shim.Error("Could not locate unpassed test")
+	// }
 
-	// Normally check that the specified argument is a valid participant of exam
-	// we are skipping this check for this example
-	stest.StestTS = time.Now().Format(time.RFC1123Z)
-	stest.Rate = args[3]
+	// // Normally check that the specified argument is a valid participant of exam
+	// // we are skipping this check for this example
+	// stest.StestTS = time.Now().Format(time.RFC1123Z)
+	// stest.Rate = args[3]
 
-	stestAsBytes, _ = json.Marshal(stest)
-	err := APIstub.PutState(args[0], stestAsBytes)
-	if err != nil {
-		return shim.Error(fmt.Sprintf("Failed to change status of exam: %s", args[0]))
-	}
+	// stestAsBytes, _ = json.Marshal(stest)
+	// err := APIstub.PutState(args[0], stestAsBytes)
+	// if err != nil {
+	// 	return shim.Error(fmt.Sprintf("Failed to change status of exam: %s", args[0]))
+	// }
 
-	return shim.Success(stestAsBytes)
+	// return shim.Success(stestAsBytes)
+
+	// TODO delete
+	return shim.Success(nil)
 }
 
 /*

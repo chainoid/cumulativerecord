@@ -549,13 +549,10 @@ return{
 		var array = req.params.generator.split("-");
 		console.log(array);
 
-		var key = array[0]
-		var groupId = array[1]
-		var groupSize = array[2]
-		var courseName = array[3]
-		var teacherName = array[4]
-		var deadlineTS = array[5]
-
+		var groupName = array[0]
+		var courseName = array[1]
+		var teacherName = array[2]
+		
 		var fabric_client = new Fabric_Client();
 
 		// setup the fabric network
@@ -596,14 +593,14 @@ return{
 		    tx_id = fabric_client.newTransactionID();
 		    console.log("Assigning transaction_id: ", tx_id._transaction_id);
 
-		    // createTestForGroup - requires 6 args: key, groupId,  groupSize, courseName, teacherName, deadlineTS
-		    // - ex: args: ['10', 'John', '002', '1504054225', 'Hansel', '005', '1504054778'],
+		    // createTestForGroup - requires 3 args: groupName,  courseName, teacherName 
+		    // 
 		    // send proposal to endorser
 		    const request = {
 		        //targets : --- letting this default to the peers assigned to the channel
 		        chaincodeId: 'cum-record',
 		        fcn: 'createTestForGroup',
-		        args: [key, groupId,  groupSize, courseName, teacherName, deadlineTS ],
+		        args: [groupName,  courseName, teacherName ],
 		        chainId: 'mychannel',
 		        txId: tx_id
 		    };
@@ -687,7 +684,7 @@ return{
 		    // check the results in the order the promises were added to the promise all list
 		    if (results && results[0] && results[0].status === 'SUCCESS') {
 		        console.log('Successfully sent transaction to the orderer.');
-		        res.send(tx_id.getTransactionID());
+		        //res.send(tx_id.getTransactionID());
 		    } else {
 		        console.error('Failed to order the transaction. Error code: ' + response.status);
 		    }
@@ -773,10 +770,10 @@ return{
 		});
 	},
 
-	get_student_test_list: function(req, res){
+	get_student_record: function(req, res){
 
 		var fabric_client = new Fabric_Client();
-		var name = req.params.name
+		var record_id = req.params.id
 
 		// setup the fabric network
 		var channel = fabric_client.newChannel('mychannel');
@@ -811,11 +808,11 @@ return{
 						throw new Error('Failed to get user1.... run registerUser.js');
 				}
 
-				// queryTestByStudent - requires 1 argument, ex: args: ['AB1200'],
+				// getStudentRecord - requires 1 argument, ex: args: ['AB1200'],
 				const request = {
 						chaincodeId: 'cum-record',
-						fcn: 'queryTestByStudent',
-						args: [name],
+						fcn: 'getStudentRecord',
+						args: [record_id],
 						chainId: 'mychannel',
 						txId: tx_id,
 				};
@@ -828,26 +825,26 @@ return{
 				if (query_responses && query_responses.length == 1) {
 						if (query_responses[0] instanceof Error) {
 								console.error("error from query = ", query_responses[0]);
-								res.send("No tests for student")
+								res.send("Student record not found")
 
 						} else {
 
 								if (query_responses[0].toString()) {
 								   console.log("Response is ", query_responses[0].toString());
-									res.json(JSON.parse(query_responses[0].toString()));
+								   res.json(JSON.parse(query_responses[0].toString()));
 								} else {
 									console.log("No payloads were returned from query");
-						            res.send("No tests for student")
+						            res.send("Student record not found")
 								}
 								//res.send(query_responses[0].toString())
 						}
 				} else {
 						console.log("No payloads were returned from query");
-						res.send("No tests for student")
+						res.send("Student record not found")
 				}
 		}).catch((err) => {
 				console.error('Failed to query successfully :: ' + err);
-				res.send("No tests for student")
+				res.send("Student record not found")
 		});
 	},
 
