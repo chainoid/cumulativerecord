@@ -4,7 +4,7 @@
     "description": "Hyperledger Fabric Sample Application",
     "main": "server.js",
     "dependencies": {
-        "angular": "^1.4.3",
+        "angular": "^1.8.3",
         "body-parser": "latest",
         "ejs": "latest",
         "express": "latest",
